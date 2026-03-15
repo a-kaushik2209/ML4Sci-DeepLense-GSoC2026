@@ -1,0 +1,22 @@
+# Datasets
+*.zip
+dataset/
+dataset (1)/
+Samples/
+__MACOSX/
+
+# Large model files (use Git LFS or link to Kaggle output)
+*.pth
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+/tmp/
+*.py
