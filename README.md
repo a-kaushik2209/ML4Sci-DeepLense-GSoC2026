@@ -10,7 +10,7 @@
 
 ## Overview
 
-This repository contains my evaluation test submissions for the **DEEPLENSE8** project under ML4Sci GSoC 2026 — _Physics-Informed Diffusion Models for Strong Gravitational Lensing Simulation_.
+This repository contains my evaluation test submissions for the **DEEPLENSE8** project under ML4Sci GSoC 2026 - _Physics-Informed Diffusion Models for Strong Gravitational Lensing Simulation_.
 
 Strong gravitational lensing is one of astrophysics' most powerful probes of dark matter substructure. The challenge: purely data-driven ML models trained on lensing simulations degrade sharply under distribution shift. Alexander et al. (2021) demonstrated that a classifier achieving AUC **0.996** on fixed-redshift simulations collapses to **0.880** when tested on variable-redshift, variable-SNR images — a gap that persists even after domain adaptation.
 
@@ -26,7 +26,7 @@ The root cause is generative models that learn _what_ lensing images look like, 
 | **Test VII**  | Physics-Guided ML (PINN)   | EfficientNet-B0 + κ-head | Macro AUC                 | **0.9947**        |
 | **Test VIII** | Diffusion Models (DDPM)    | U-Net (22M params)       | FID / Physics Consistency | **191.85 / 100%** |
 
-> **Note on Test VIII FID:** InceptionV3 (the backbone of FID computation) was trained on natural RGB images — single-channel astrophysical images with sparse structures are out-of-distribution for it, inflating FID artificially. The physics consistency check — **200/200 (100%) generated images classified as valid lensing observations** by the independently-trained Test I classifier — is the meaningful domain-specific quality metric. See [Adam et al. 2022](https://arxiv.org/abs/2211.03812) for why domain-specific evaluation matters for lensing generative models.
+> **Note on Test VIII FID:** InceptionV3 (the backbone of FID computation) was trained on natural RGB images - single-channel astrophysical images with sparse structures are out-of-distribution for it, inflating FID artificially. The physics consistency check - **200/200 (100%) generated images classified as valid lensing observations** by the independently-trained Test I classifier - is the meaningful domain-specific quality metric. See [Adam et al. 2022](https://arxiv.org/abs/2211.03812) for why domain-specific evaluation matters for lensing generative models.
 
 ---
 
@@ -63,7 +63,7 @@ ML4Sci-DeepLense-GSoC2026/
 
 **Model:** EfficientNet-B0 pretrained on ImageNet, fine-tuned for 3-class lensing classification.
 
-I chose EfficientNet-B0 over ResNet-18 for a specific reason: its squeeze-and-excitation blocks provide channel-wise feature recalibration — useful for attending to the subtle morphological differences between a smooth Einstein ring (`no_sub`), a ring perturbed by localized mass clumps (`sphere`), and a ring with linear vortex-induced asymmetry (`vort`). EfficientNet-B0 also achieves this with ~5.3M fewer parameters than ResNet-18, reducing overfitting risk on single-channel astrophysical data.
+I chose EfficientNet-B0 over ResNet-18 for a specific reason: its squeeze-and-excitation blocks provide channel-wise feature recalibration - useful for attending to the subtle morphological differences between a smooth Einstein ring (`no_sub`), a ring perturbed by localized mass clumps (`sphere`), and a ring with linear vortex-induced asymmetry (`vort`). EfficientNet-B0 also achieves this with ~5.3M fewer parameters than ResNet-18, reducing overfitting risk on single-channel astrophysical data.
 
 **Training configuration:**
 
@@ -87,7 +87,7 @@ I chose EfficientNet-B0 over ResNet-18 for a specific reason: its squeeze-and-ex
 
 **Test Accuracy:** 95.31%
 
-This classifier serves a dual purpose: primary evaluation metric for Test I, and the **independent physics consistency evaluator** for Test VIII — where it verifies whether generated lensing images are morphologically valid.
+This classifier serves a dual purpose: primary evaluation metric for Test I, and the **independent physics consistency evaluator** for Test VIII - where it verifies whether generated lensing images are morphologically valid.
 
 ---
 
@@ -103,7 +103,7 @@ The gravitational lensing potential ψ satisfies the **Poisson equation**:
 ∇²ψ = 2κ
 ```
 
-where κ is the convergence — the dimensionless projected mass density. For each substructure class, κ has a distinct spatial signature:
+where κ is the convergence - the dimensionless projected mass density. For each substructure class, κ has a distinct spatial signature:
 
 - **no_sub:** smooth, low-variance κ map
 - **subhalo (sphere):** localized high-κ peaks from point mass concentrations
@@ -155,7 +155,7 @@ Examining the predicted κ statistics per class across 100 test samples:
 | sphere | −0.0003 | 0.0501 | 0.3550 | −0.5596    |
 | vortex | −0.0003 | 0.0436 | 0.3546 | −0.5636    |
 
-The κ-head converged to near-constant predictions across classes — collapsing to a dataset mean rather than learning class-discriminative physics. This reveals that **output-level physics penalties are architecturally insufficient** when the internal representations are formed without physical structure. The fix requires injecting physics into the representations themselves, not penalizing outputs after they are formed. This finding directly motivates the cross-attention conditioning approach proposed for DEEPLENSE8.
+The κ-head converged to near-constant predictions across classes - collapsing to a dataset mean rather than learning class-discriminative physics. This reveals that **output-level physics penalties are architecturally insufficient** when the internal representations are formed without physical structure. The fix requires injecting physics into the representations themselves, not penalizing outputs after they are formed. This finding directly motivates the cross-attention conditioning approach proposed for DEEPLENSE8.
 
 ---
 
@@ -193,7 +193,7 @@ Noisy image x_t  +  Timestep t
 **Key design choices:**
 
 - **Cosine β-schedule** (Nichol & Dhariwal, 2021): ᾱ_t = cos²((t/T + s)/(1+s) · π/2) / cos²(s/(1+s) · π/2) with s=0.008 — preserves more signal at large timesteps vs. linear schedule
-- **Min-SNR-γ loss weighting** (γ=5): w(t) = min(SNR(t), γ)/SNR(t) — prevents high-SNR timesteps from dominating gradients
+- **Min-SNR-γ loss weighting** (γ=5): w(t) = min(SNR(t), γ)/SNR(t) - prevents high-SNR timesteps from dominating gradients
 - **EMA** (decay=0.9999): shadow model updated every step, loaded for inference
 - **DDIM sampler** (50 steps, η=0): deterministic fast inference
 
@@ -203,7 +203,7 @@ Noisy image x_t  +  Timestep t
 
 | Metric                    | Value                | Notes                                                        |
 | ------------------------- | -------------------- | ------------------------------------------------------------ |
-| FID Score                 | 191.85               | Inflated by InceptionV3 domain mismatch — see note below     |
+| FID Score                 | 191.85               | Inflated by InceptionV3 domain mismatch - see note below     |
 | Best Training Loss        | 0.002331             | Min-SNR weighted MSE                                         |
 | SSIM (avg best-match)     | 0.3295               | Computed over 100 real/generated pairs                       |
 | Physics Consistency       | **200 / 200 (100%)** | Generated images classified as valid lensing by Test I model |
@@ -226,7 +226,7 @@ Epoch 100/100| Loss: 0.0023  ← best
 
 ### On the FID Score
 
-FID is computed by comparing InceptionV3 feature distributions between real and generated images. InceptionV3 was pretrained on ImageNet — full-color natural images at 224×224. Our images are:
+FID is computed by comparing InceptionV3 feature distributions between real and generated images. InceptionV3 was pretrained on ImageNet - full-color natural images at 224×224. Our images are:
 
 - Single-channel (grayscale)
 - 64×64 resolution
@@ -234,7 +234,7 @@ FID is computed by comparing InceptionV3 feature distributions between real and 
 
 This creates a fundamental domain mismatch that inflates FID regardless of actual generation quality. [Adam et al. (2022)](https://arxiv.org/abs/2211.03812) explicitly avoid FID when evaluating score-based models for lensing reconstruction, instead measuring physical consistency against the governing lensing equations.
 
-**The physics consistency result (100%) is the meaningful metric:** all 200 DDIM-generated images were confidently classified as valid gravitational lensing observations by the independently-trained EfficientNet-B0 classifier from Test I. The generated images have learned the morphology of lensing — Einstein ring structure, correct intensity distributions, physically plausible arc geometry.
+**The physics consistency result (100%) is the meaningful metric:** all 200 DDIM-generated images were confidently classified as valid gravitational lensing observations by the independently-trained EfficientNet-B0 classifier from Test I. The generated images have learned the morphology of lensing - Einstein ring structure, correct intensity distributions, physically plausible arc geometry.
 
 ---
 
@@ -244,9 +244,9 @@ These three tests, taken together, reveal a clear path to the DEEPLENSE8 researc
 
 **Test I** establishes a high-accuracy baseline classifier (AUC 0.9948) and serves as the physics consistency oracle for evaluating generated images.
 
-**Test VII** reveals that output-level physics constraints (loss penalties on κ statistics) are insufficient — the κ-head collapsed to dataset means rather than learning class-discriminative convergence structure. This directly motivates encoding physics into the _internal representations_ of the diffusion model rather than constraining its outputs.
+**Test VII** reveals that output-level physics constraints (loss penalties on κ statistics) are insufficient - the κ-head collapsed to dataset means rather than learning class-discriminative convergence structure. This directly motivates encoding physics into the _internal representations_ of the diffusion model rather than constraining its outputs.
 
-**Test VIII** shows the baseline DDPM already generates morphologically consistent lensing images (100% physics consistency) without any explicit physics conditioning. The DEEPLENSE8 project makes this consistency principled: encoding the Poisson equation ∇²ψ = 2κ through κ cross-attention conditioning at the U-Net bottleneck, enforcing rotational symmetry through equivariant convolutions, and validating physical consistency through the downstream AUC delta test — does physics-consistent augmentation reduce the 0.996 → 0.880 domain gap from Alexander et al. (2021)?
+**Test VIII** shows the baseline DDPM already generates morphologically consistent lensing images (100% physics consistency) without any explicit physics conditioning. The DEEPLENSE8 project makes this consistency principled: encoding the Poisson equation ∇²ψ = 2κ through κ cross-attention conditioning at the U-Net bottleneck, enforcing rotational symmetry through equivariant convolutions, and validating physical consistency through the downstream AUC delta test - does physics-consistent augmentation reduce the 0.996 → 0.880 domain gap from Alexander et al. (2021)?
 
 ---
 
@@ -281,7 +281,7 @@ All notebooks are self-contained and run top-to-bottom on Kaggle with datasets a
 | Test         | Dataset                       | Images | Classes                | Source                                                                                 |
 | ------------ | ----------------------------- | ------ | ---------------------- | -------------------------------------------------------------------------------------- |
 | Test I & VII | Strong lensing classification | 37,500 | no_sub, sphere, vortex | ML4Sci DeepLense                                                                       |
-| Test VIII    | Strong lensing generation     | 10,000 | — (generation task)    | [Google Drive](https://drive.google.com/file/d/1cJyPQzVOzsCZQctNBuHCqxHnOY7v7UiA/view) |
+| Test VIII    | Strong lensing generation     | 10,000 | - (generation task)    | [Google Drive](https://drive.google.com/file/d/1cJyPQzVOzsCZQctNBuHCqxHnOY7v7UiA/view) |
 
 Images are single-channel `.npy` files, 150×150 pixels, min-max normalized to [0, 1].
 
@@ -305,4 +305,4 @@ Images are single-channel `.npy` files, 150×150 pixels, min-max normalized to [
 
 ---
 
-_Submitted as part of GSoC 2026 application to ML4Sci — DEEPLENSE8: Physics-Informed Diffusion Models for Gravitational Lensing Simulation._
+_Submitted as part of GSoC 2026 application to ML4Sci - DEEPLENSE8: Physics-Informed Diffusion Models for Gravitational Lensing Simulation._
