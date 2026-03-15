@@ -1,4 +1,4 @@
-# DeepLense — GSoC 2026 | ML4Sci
+# DeepLense - GSoC 2026 | ML4Sci
 
 ## DEEPLENSE8: Physics-Informed Diffusion Models for Gravitational Lensing Simulation
 
