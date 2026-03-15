@@ -12,9 +12,9 @@
 
 This repository contains my evaluation test submissions for the **DEEPLENSE8** project under ML4Sci GSoC 2026 - _Physics-Informed Diffusion Models for Strong Gravitational Lensing Simulation_.
 
-Strong gravitational lensing is one of astrophysics' most powerful probes of dark matter substructure. The challenge: purely data-driven ML models trained on lensing simulations degrade sharply under distribution shift. Alexander et al. (2021) demonstrated that a classifier achieving AUC **0.996** on fixed-redshift simulations collapses to **0.880** when tested on variable-redshift, variable-SNR images — a gap that persists even after domain adaptation.
+Strong gravitational lensing is one of astrophysics' most powerful probes of dark matter substructure. The challenge: purely data-driven ML models trained on lensing simulations degrade sharply under distribution shift. Alexander et al. (2021) demonstrated that a classifier achieving AUC **0.996** on fixed-redshift simulations collapses to **0.880** when tested on variable-redshift, variable-SNR images - a gap that persists even after domain adaptation.
 
-The root cause is generative models that learn _what_ lensing images look like, but not _why_. The governing physics — the lens equation **β = θ − α(θ)**, the Poisson equation **∇²ψ = 2κ**, and the rotational symmetry of lensing geometry — are not enforced during generation. This project encodes them directly into the diffusion architecture.
+The root cause is generative models that learn _what_ lensing images look like, but not _why_. The governing physics - the lens equation **β = θ − α(θ)**, the Poisson equation **∇²ψ = 2κ**, and the rotational symmetry of lensing geometry - are not enforced during generation. This project encodes them directly into the diffusion architecture.
 
 ---
 
