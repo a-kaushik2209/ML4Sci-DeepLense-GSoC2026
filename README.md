@@ -42,20 +42,14 @@ ML4Sci-DeepLense-GSoC2026/
 │
 ├── README.md
 │
-├── test-1/                                         # Common Test I
-│   ├── test1-multiclass-classification-ff.ipynb    # Full notebook
-│   ├── test1_best_model.pth                        # Best model weights (val AUC)
-│   └── test_predictions.csv                        # Predictions + probabilities
+├── test-1/                                        
+│   ├── test1-multiclass-classification-ff.ipynb    
 │
-├── test-7/                                         # Specific Test VII
-│   ├── test7-pinn.ipynb                            # Full notebook
-│   ├── test7_pinn_best.pth                         # Best PINN weights
-│   └── test7_predictions.csv                       # Predictions + probabilities
+├── test-7/                                         
+│   ├── test7-pinn.ipynb                           
 │
-└── test-8/                                         # Specific Test VIII
-    ├── test8-ddpm.ipynb                            # Full notebook
-    ├── test8_ddpm_ema.pth                          # EMA weights (used for inference)
-    └── test8_ddpm_best.pth                         # Best training checkpoint
+└── test-8/                                         
+    ├── test8-ddpm.ipynb                            
 ```
 
 ---
